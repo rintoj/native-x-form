@@ -30,15 +30,21 @@ interface Props<T> {
   }) => ReactNode | ReactNode[]
 
   onSubmit?: (props: { state: T; isValid: boolean }) => Promise<any>
+  onChange?: (props: { state: T; isValid: boolean }) => Promise<any>
 }
 
-export function Form<T>({ onSubmit, children, ...props }: Props<T>) {
+export function Form<T>({ onSubmit, onChange, children, ...props }: Props<T>) {
   const context = useRef<{ [id: string]: ValidatorContext<T> }>({} as any)
   const state = useRef<T>(props.state || ({} as T))
   const [submitted, setSubmitted] = useState<boolean>(false)
 
   const setFormValue = (name: string, value: string) => {
     state.current = { ...state.current, [name]: value }
+    const isValid =
+      Object.keys(context.current)
+        .map(key => context.current?.[key]?.validate?.())
+        .filter(i => i !== true).length === 0
+    onChange?.({ state: state.current, isValid })
   }
 
   const setItemContext = useCallback((name: string, itemContext: ValidatorContext<T>) => {

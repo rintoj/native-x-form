@@ -22,6 +22,9 @@ npm install native-x-form
 
 ```tsx
 import { Form, FormItem, isEmpty, isInvalidEmail } from 'native-x-form'
+import { Button } from 'native-x-button'
+import { TextInput } from 'native-x-text-input'
+import { Stack } from 'native-x-stack'
 
 interface FormData {
   email: string
@@ -46,9 +49,14 @@ function MyComponent() {
 
   return (
     <Form<FormData> state={state} onSubmit={onSubmit}>
-      <FormItem name='email' validators={[isEmpty('Email is required'), isInvalidEmail()]}>
-        <TextInput />
-      </FormItem>
+      {({ submitForm }) => (
+        <Stack>
+          <FormItem name='email' validators={[isEmpty('Email is required'), isInvalidEmail()]}>
+            <TextInput />
+          </FormItem>
+          <Button onTap={submitForm}>Submit</Button>
+        </Stack>
+      )}
     </Form>
   )
 }
@@ -100,6 +108,7 @@ function Input(props: InputProps) {
 | state?: T                                                         | any           | State of the form               |
 | children?: ReactNode[]                                            |               | Content of the form             |
 | onSubmit?: (props: { state: T, isValid: boolean}) => Promise<any> |               | Handler for submitting the form |
+| onChange?: (props: { state: T, isValid: boolean}) => Promise<any> |               | Event handler for change        |
 
 ## API - Form-Item
 
