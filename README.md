@@ -103,12 +103,13 @@ function Input(props: InputProps) {
 
 ## API - Form
 
-| Property                                                          | Default Value | Usage                           |
-| ----------------------------------------------------------------- | ------------- | ------------------------------- |
-| state?: T                                                         | any           | State of the form               |
-| children?: ReactNode[]                                            |               | Content of the form             |
-| onSubmit?: (props: { state: T, isValid: boolean}) => Promise<any> |               | Handler for submitting the form |
-| onChange?: (props: { state: T, isValid: boolean}) => Promise<any> |               | Event handler for change        |
+| Property                                                          | Default Value | Usage                               |
+| ----------------------------------------------------------------- | ------------- | ----------------------------------- |
+| state?: T                                                         | any           | State of the form                   |
+| submitIfValid?: boolean                                           | true          | Call onSubmit only if form is valid |
+| children?: ReactNode[]                                            |               | Content of the form                 |
+| onSubmit?: (props: { state: T, isValid: boolean}) => Promise<any> |               | Handler for submitting the form     |
+| onChange?: (props: { state: T, isValid: boolean}) => Promise<any> |               | Event handler for change            |
 
 ## API - Form-Item
 

@@ -29,23 +29,33 @@ interface Props<T> {
     resetForm: () => void
   }) => ReactNode | ReactNode[]
 
+  submitIfValid?: boolean
   onSubmit?: (props: { state: T; isValid: boolean }) => Promise<any>
   onChange?: (props: { state: T; isValid: boolean }) => Promise<any>
 }
 
-export function Form<T>({ onSubmit, onChange, children, ...props }: Props<T>) {
+export function Form<T>({
+  submitIfValid = true,
+  onSubmit,
+  onChange,
+  children,
+  ...props
+}: Props<T>) {
   const context = useRef<{ [id: string]: ValidatorContext<T> }>({} as any)
   const state = useRef<T>(props.state || ({} as T))
   const [submitted, setSubmitted] = useState<boolean>(false)
 
-  const setFormValue = (name: string, value: string) => {
-    state.current = { ...state.current, [name]: value }
-    const isValid =
-      Object.keys(context.current)
-        .map(key => context.current?.[key]?.validate?.())
-        .filter(i => i !== true).length === 0
-    onChange?.({ state: state.current, isValid })
-  }
+  const setFormValue = useCallback(
+    (name: string, value: string) => {
+      state.current = { ...state.current, [name]: value }
+      const isValid =
+        Object.keys(context.current)
+          .map(key => context.current?.[key]?.validate?.())
+          .filter(i => i !== true).length === 0
+      onChange?.({ state: state.current, isValid })
+    },
+    [onChange],
+  )
 
   const setItemContext = useCallback((name: string, itemContext: ValidatorContext<T>) => {
     context.current = { ...context.current, [name]: itemContext }
@@ -57,8 +67,10 @@ export function Form<T>({ onSubmit, onChange, children, ...props }: Props<T>) {
         .map(key => context.current?.[key]?.validate?.())
         .filter(i => i !== true).length === 0
     setSubmitted(true)
-    onSubmit?.({ state: state.current, isValid })
-  }, [context, onSubmit, state])
+    if (!submitIfValid || isValid) {
+      onSubmit?.({ state: state.current, isValid })
+    }
+  }, [onSubmit, submitIfValid])
 
   const resetForm = useCallback(() => {
     Object.keys(context).map(key => context.current?.[key]?.clear?.())
@@ -74,7 +86,7 @@ export function Form<T>({ onSubmit, onChange, children, ...props }: Props<T>) {
       setFormValue,
       setItemContext,
     }
-  }, [submitted, submitForm, resetForm, setItemContext])
+  }, [submitted, submitForm, resetForm, setFormValue, setItemContext])
 
   return (
     <FormContext.Provider value={value}>
