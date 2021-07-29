@@ -66,8 +66,8 @@ export function Form<T>({
       Object.keys(context.current)
         .map(key => context.current?.[key]?.validate?.())
         .filter(i => i !== true).length === 0
-    setSubmitted(true)
-    if (!submitIfValid || isValid) {
+    if (submitIfValid && isValid) {
+      setSubmitted(true)
       onSubmit?.({ state: state.current, isValid })
     }
   }, [onSubmit, submitIfValid])
