@@ -26,11 +26,10 @@ export function FormItem<T extends AcceptableFormValue>({ children, name, valida
 
   const onChange = useCallback(
     (currentValue: T) => {
-      setFormValue?.(name, currentValue)
       setValue(currentValue)
       setTouched?.(true)
     },
-    [setFormValue, name, setValue, setTouched],
+    [setValue, setTouched],
   )
 
   const onBlur = useCallback(() => {
@@ -40,6 +39,10 @@ export function FormItem<T extends AcceptableFormValue>({ children, name, valida
   useEffect(() => {
     setItemContext?.(name, stateContext)
   }, [name, setItemContext, stateContext])
+
+  useEffect(() => {
+    setFormValue?.(name, value)
+}, [setFormValue, name, value])
 
   return React.cloneElement(children, {
     value,
